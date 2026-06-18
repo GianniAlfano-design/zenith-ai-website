@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenith AI — Custom AI Assistants for Local Business</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-bright: #E8C96A;
+      --gold-glow: rgba(201,168,76,0.18);
+      --black: #080A0E;
+      --surface: #0D0F14;
+      --surface2: #111318;
+      --border: rgba(201,168,76,0.12);
+      --text: #E2DDD4;
+      --muted: #6B6760;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4 { font-family: 'Syne', system-ui, sans-serif; }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes wordSlide {
+      from { transform: translateY(105%); }
+      to   { transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.3; transform: scaleY(1); }
+      50%     { opacity: 1;   transform: scaleY(1.3); }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(201,168,76,0.15); }
+      50%     { box-shadow: 0 0 40px rgba(201,168,76,0.35); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      transition: background 0.4s, border-color 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(8,10,14,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+    .nav-brand-name {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem;
+      letter-spacing: 0.06em; color: #fff; text-transform: uppercase;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.65rem 1.5rem; border-radius: 6px;
+      font-family: 'Syne', sans-serif; font-weight: 600;
+      font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; transition: all 0.25s ease;
+      border: none;
+    }
+    .btn-gold { background: var(--gold); color: var(--black); }
+    .btn-gold:hover {
+      background: var(--gold-bright);
+      box-shadow: 0 0 30px rgba(201,168,76,0.5), 0 0 60px rgba(201,168,76,0.2);
+      transform: translateY(-2px);
+    }
+    .btn-outline { background: transparent; color: var(--gold); border: 1px solid rgba(201,168,76,0.4); }
+    .btn-outline:hover {
+      border-color: var(--gold); background: var(--gold-glow);
+      box-shadow: 0 0 24px var(--gold-glow); transform: translateY(-2px);
+    }
+    .btn-lg { padding: 0.9rem 2.2rem; font-size: 0.9rem; border-radius: 8px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 8rem 1.5rem 6rem;
+      overflow: hidden;
+    }
+    #hero-canvas { position: absolute; inset: 0; z-index: 0; opacity: 0.5; }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero-label {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600;
+      border: 1px solid var(--border); background: rgba(201,168,76,0.06);
+      padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 800;
+      line-height: 1.0; letter-spacing: -0.02em; color: #fff; margin-bottom: 1.5rem;
+    }
+    .hero-title .word { display: inline-block; overflow: hidden; }
+    .hero-title .word-inner {
+      display: inline-block;
+      animation: wordSlide 0.9s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    .hero-title .word:nth-child(1) .word-inner { animation-delay: 0.5s; }
+    .hero-title .word:nth-child(2) .word-inner { animation-delay: 0.62s; }
+    .hero-title .word:nth-child(3) .word-inner { animation-delay: 0.74s; }
+    .hero-title .word:nth-child(4) .word-inner { animation-delay: 0.86s; }
+    .hero-title .gold { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted);
+      max-width: 500px; margin: 0 auto 3rem;
+      font-weight: 300; line-height: 1.7;
+      animation: fadeUp 0.9s ease 1s both;
+    }
+    .hero-ctas {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.8s ease 1.15s both;
+    }
+    .hero-scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; z-index: 2;
+      animation: fadeIn 1s ease 1.6s both;
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── TRUST MARQUEE ── */
+    .trust-bar {
+      overflow: hidden;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 1.1rem 0; background: var(--surface);
+    }
+    .marquee-track {
+      display: flex; gap: 4rem;
+      animation: marquee 30s linear infinite; width: max-content;
+    }
+    .marquee-item {
+      display: flex; align-items: center; gap: 0.6rem; white-space: nowrap;
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); font-weight: 500;
+    }
+    .marquee-dot { color: var(--gold); }
+
+    /* ── SECTION BASE ── */
+    section { padding: 7rem 1.5rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--gold); }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800;
+      color: #fff; line-height: 1.1; letter-spacing: -0.02em;
+    }
+    .section-title em { font-style: normal; color: var(--gold); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 1; transform: none; }
+    /* only hide when JS is confirmed running */
+    .js-anim .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .js-anim .reveal.in-view { opacity: 1; transform: none; }
+    /* stagger siblings inside same parent */
+    .js-anim .reveal.in-view:nth-child(2) { transition-delay: 0.1s; }
+    .js-anim .reveal.in-view:nth-child(3) { transition-delay: 0.2s; }
+    .js-anim .reveal.in-view:nth-child(4) { transition-delay: 0.3s; }
+
+    /* ── STATS ── */
+    .stats-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 5rem 1.5rem;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800;
+      color: var(--gold); line-height: 1; margin-bottom: 0.4rem;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--muted); }
+
+    /* ── PROBLEM ── */
+    .problem-section { text-align: center; }
+    .problem-quote {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 3rem); font-weight: 700;
+      line-height: 1.45; color: #fff; max-width: 820px; margin: 0 auto 2rem;
+    }
+    .rw { display: inline-block; opacity: 1; }
+    .rw em { font-style: normal; color: var(--gold); }
+    .problem-note { font-size: 1rem; color: var(--muted); max-width: 520px; margin: 0 auto; }
+
+    /* ── HOW IT WORKS ── */
+    .hiw-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .hiw-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem; margin-top: 3.5rem; position: relative;
+    }
+    .hiw-grid::before {
+      content: '';
+      position: absolute; top: 48px; left: calc(16.6% + 24px); right: calc(16.6% + 24px);
+      height: 1px; background: linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+      display: none;
+    }
+    @media (min-width: 900px) { .hiw-grid::before { display: block; } }
+    .hiw-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem 2rem;
+      text-align: center; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .hiw-card:hover {
+      border-color: rgba(201,168,76,0.4);
+      box-shadow: 0 0 40px var(--gold-glow);
+    }
+    .hiw-step-num {
+      font-family: 'Syne', sans-serif; font-size: 5rem; font-weight: 800;
+      color: rgba(201,168,76,0.08); line-height: 1; margin-bottom: -0.75rem;
+    }
+    .hiw-icon {
+      width: 64px; height: 64px; border: 1px solid var(--border);
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin: 0 auto 1.25rem;
+      background: var(--black); box-shadow: 0 0 24px var(--gold-glow);
+    }
+    .hiw-card h3 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem; }
+    .hiw-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── INDUSTRIES ── */
+    .industries-section { background: var(--surface); border-top: 1px solid var(--border); }
+    .industries-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 3.5rem; gap: 2rem; flex-wrap: wrap;
+    }
+    .industries-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; }
+    .industry-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 2rem 1.5rem;
+      transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+      opacity: 1;
+    }
+    .js-anim .industry-card {
+      opacity: 0; transform: translateY(36px);
+      transition: border-color 0.35s, box-shadow 0.35s, opacity 0.65s ease, transform 0.65s ease;
+    }
+    .js-anim .industry-card.in-view { opacity: 1; transform: none; }
+    .industry-card:hover {
+      border-color: rgba(201,168,76,0.5);
+      box-shadow: 0 0 40px var(--gold-glow), 0 20px 60px rgba(0,0,0,0.5);
+      transform: translateY(-6px) !important;
+    }
+    .ind-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      border: 1px solid var(--border); display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;
+      background: rgba(201,168,76,0.05);
+    }
+    .industry-card h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
+    .industry-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── TESTIMONIAL ── */
+    .testimonial-section { text-align: center; padding: 6rem 1.5rem; }
+    .testimonial-card {
+      max-width: 680px; margin: 3rem auto 0;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 3rem; position: relative;
+    }
+    .testimonial-card::before {
+      content: '"'; position: absolute; top: -0.5rem; left: 2.5rem;
+      font-size: 6rem; color: var(--gold); opacity: 0.15;
+      font-family: 'Syne', sans-serif; line-height: 1;
+    }
+    .testimonial-text {
+      font-size: 1.1rem; line-height: 1.8; color: var(--text);
+      margin-bottom: 1.75rem; font-style: italic;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+    .author-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--gold-glow); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+    .author-name { font-weight: 600; color: #fff; font-size: 0.9rem; }
+    .author-title { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── PRICING ── */
+    .pricing-section { background: var(--surface); border-top: 1px solid var(--border); text-align: center; }
+    .pricing-wrap { display: flex; justify-content: center; margin-top: 3.5rem; }
+    .pricing-card {
+      background: var(--black); border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 20px; padding: 3.5rem 3rem; max-width: 500px; width: 100%;
+      text-align: center;
+      box-shadow: 0 0 80px rgba(201,168,76,0.1), 0 40px 80px rgba(0,0,0,0.6);
+      position: relative; overflow: hidden;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    .pricing-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .price-badge {
+      display: inline-block; background: rgba(201,168,76,0.1);
+      border: 1px solid var(--border); color: var(--gold);
+      font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+      font-weight: 600; padding: 0.35rem 1rem; border-radius: 50px; margin-bottom: 2rem;
+    }
+    .price-main {
+      font-family: 'Syne', sans-serif; font-size: 4rem; font-weight: 800;
+      color: var(--gold); line-height: 1; margin-bottom: 0.25rem;
+    }
+    .price-note { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .price-then {
+      color: #9a9490; font-size: 1rem;
+      margin-bottom: 2.5rem; padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-then strong { color: var(--gold); }
+    .benefits { list-style: none; text-align: left; margin-bottom: 2.5rem; }
+    .benefits li {
+      display: flex; align-items: center; gap: 0.85rem;
+      padding: 0.75rem 0; font-size: 0.9rem; color: #c8c4bb;
+      border-bottom: 1px solid rgba(201,168,76,0.05);
+    }
+    .benefits li:last-child { border: none; }
+    .check { color: var(--gold); font-size: 0.8rem; flex-shrink: 0; }
+
+    /* ── CTA ── */
+    .cta-section {
+      min-height: 80vh; display: flex; align-items: center;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); width: 800px; height: 400px;
+      background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 2; width: 100%; }
+    .cta-section h2 {
+      font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 800; color: #fff;
+      line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.25rem;
+    }
+    .cta-section h2 em { font-style: normal; color: var(--gold); }
+    .cta-section p { color: var(--muted); margin-bottom: 2.5rem; font-size: 1.05rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2.5rem 2rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .footer-brand span {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase;
+    }
+    footer p { font-size: 0.78rem; color: var(--muted); }
+
+    .logo-svg { width: 36px; height: 36px; flex-shrink: 0; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 1.25rem; }
+      .industries-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a class="nav-brand" href="#">
+      <svg class="logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="20" fill="#080A0E"/>
+        <defs>
+          <filter id="lg" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="dg" x="-150%" y="-150%" width="400%" height="400%">
+            <feGaussianBlur stdDeviation="3.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <line x1="6"  y1="6"  x2="34" y2="34" stroke="#C9A84C" stroke-width="3"   stroke-linecap="round" opacity="0.45" filter="url(#lg)"/>
+        <line x1="34" y1="6"  x2="6"  y2="34" stroke="#C9A84C" stroke-width="3"   stroke-linecap="round" opacity="0.45" filter="url(#lg)"/>
+        <line x1="6"  y1="6"  x2="34" y2="34" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="34" y1="6"  x2="6"  y2="34" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="5" fill="#C9A84C" opacity="0.25" filter="url(#dg)"/>
+        <circle cx="20" cy="20" r="2.2" fill="#FFF5D6"/>
+      </svg>
+      <span class="nav-brand-name">Zenith AI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#industries">Industries</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <a href="https://calendly.com" target="_blank" class="btn btn-gold">Book a Demo</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-label"><span>✦</span> Custom AI for Local Business</div>
+      <h1 class="hero-title">
+        <span class="word"><span class="word-inner">Your</span></span>
+        <span class="word"><span class="word-inner">Business.</span></span><br>
+        <span class="word gold"><span class="word-inner">Always</span></span>
+        <span class="word gold"><span class="word-inner">On.</span></span>
+      </h1>
+      <p class="hero-sub">We build custom AI assistants that answer questions, capture leads, and serve your customers 24/7 — so you never miss a sale while you sleep.</p>
+      <div class="hero-ctas">
+        <a href="https://zenith-demo-chatbot.netlify.app" target="_blank" class="btn btn-gold btn-lg">See It Live →</a>
+        <a href="https://calendly.com" target="_blank" class="btn btn-outline btn-lg">Book a Free Demo</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- TRUST MARQUEE -->
+  <div class="trust-bar">
+    <div class="marquee-track">
+      <div class="marquee-item"><span class="marquee-dot">✦</span> 24/7 Customer Engagement</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Zero Missed Leads</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Live in Under 7 Days</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Built on Claude AI</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> No Code Required</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Unlimited Conversations</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Fully Branded</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Cancel Anytime</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> 24/7 Customer Engagement</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Zero Missed Leads</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Live in Under 7 Days</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Built on Claude AI</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> No Code Required</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Unlimited Conversations</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Fully Branded</div>
+      <div class="marquee-item"><span class="marquee-dot">✦</span> Cancel Anytime</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <div class="stat-num" data-target="24" data-suffix="/7">24/7</div>
+          <div class="stat-label">Always available for customers</div>
+        </div>
+        <div class="stat-item reveal">
+          <div class="stat-num">&lt; 5 days</div>
+          <div class="stat-label">Average time to go live</div>
+        </div>
+        <div class="stat-item reveal">
+          <div class="stat-num" data-target="100" data-suffix="%">100%</div>
+          <div class="stat-label">Leads captured, never missed</div>
+        </div>
+        <div class="stat-item reveal">
+          <div class="stat-num">$0</div>
+          <div class="stat-label">Per-message fees. Ever.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="problem-section" id="problem">
+    <div class="container">
+      <p class="section-label reveal" style="justify-content:center;">The Reality</p>
+      <p class="problem-quote" id="problem-quote">
+        <span class="rw">Your</span> <span class="rw">customers</span> <span class="rw">have</span>
+        <span class="rw">questions</span> <span class="rw">at</span> <span class="rw">11pm.</span>
+        <span class="rw">You</span> <span class="rw">can't</span> <span class="rw">be</span>
+        <span class="rw">there.</span> <span class="rw"><em>Your&nbsp;AI&nbsp;can.</em></span>
+      </p>
+      <p class="problem-note reveal" style="margin-top:2rem;">Every unanswered message is a customer lost to a competitor who responded faster. Your AI is always there — professional, on-brand, and ready.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="hiw-section" id="how">
+    <div class="container">
+      <p class="section-label reveal">The Process</p>
+      <h2 class="section-title reveal">Live in days, <em>not months.</em></h2>
+      <div class="hiw-grid">
+        <div class="hiw-card reveal">
+          <div class="hiw-step-num">01</div>
+          <div class="hiw-icon">🔍</div>
+          <h3>We Learn Your Business</h3>
+          <p>We study your services, pricing, tone, and FAQs — so your AI sounds exactly like you, not a generic chatbot.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-step-num">02</div>
+          <div class="hiw-icon">⚡</div>
+          <h3>We Build Your AI</h3>
+          <p>Custom-trained, branded, and tested. Embedded on your site in minutes with a single line of code — no tech skills needed.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-step-num">03</div>
+          <div class="hiw-icon">🚀</div>
+          <h3>You Get Customers 24/7</h3>
+          <p>Your AI captures leads, books appointments, and handles questions around the clock. You focus on running your business.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INDUSTRIES -->
+  <section class="industries-section" id="industries">
+    <div class="container">
+      <div class="industries-header">
+        <div>
+          <p class="section-label">Who We Serve</p>
+          <h2 class="section-title reveal">Built for businesses<br>that run on <em>reputation</em>.</h2>
+        </div>
+        <p class="reveal" style="color:var(--muted); max-width:300px; font-size:0.9rem;">Your AI learns your industry's language — so it answers like a pro, not a robot.</p>
+      </div>
+      <div class="industries-grid">
+        <div class="industry-card"><div class="ind-icon">💆</div><h3>Spas & Salons</h3><p>Book appointments, answer service questions, collect deposits — even while you're with a client.</p></div>
+        <div class="industry-card"><div class="ind-icon">🍽️</div><h3>Restaurants</h3><p>Share menus, handle reservations, capture private event inquiries 24/7.</p></div>
+        <div class="industry-card"><div class="ind-icon">🏨</div><h3>Boutique Hotels</h3><p>Answer guest questions, confirm availability, upsell amenities automatically.</p></div>
+        <div class="industry-card"><div class="ind-icon">🎩</div><h3>Concierge Services</h3><p>Qualify clients, explain your offerings, and schedule premium consultations.</p></div>
+        <div class="industry-card"><div class="ind-icon">🏡</div><h3>Real Estate Teams</h3><p>Qualify buyer leads, answer listing questions, and book showings on autopilot.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY ZENITH AI -->
+  <section style="padding: 7rem 1.5rem; text-align:center;">
+    <div class="container">
+      <p class="section-label reveal" style="justify-content:center;">Why Zenith AI</p>
+      <h2 class="section-title reveal">Not a chatbot.<br><em>Your AI employee.</em></h2>
+      <p class="reveal" style="color:var(--muted); max-width:520px; margin: 1rem auto 3.5rem; font-size:1rem;">Generic chatbots give generic answers. Yours is trained on your actual business — your prices, your services, your voice.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem; text-align:left;">
+        <div class="hiw-card reveal">
+          <div class="hiw-icon">🎯</div>
+          <h3 style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:0.5rem;">Trained on YOUR business</h3>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">We feed it your real services, prices, FAQs, and tone — not a generic template.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-icon">⚡</div>
+          <h3 style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:0.5rem;">Responds in seconds</h3>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Customers get instant answers at 2am, on weekends, during holidays — no wait, no voicemail.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-icon">📩</div>
+          <h3 style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:0.5rem;">Captures every lead</h3>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Name, email, phone — collected and sent straight to you before the conversation ends.</p>
+        </div>
+        <div class="hiw-card reveal">
+          <div class="hiw-icon">🔄</div>
+          <h3 style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:0.5rem;">Gets smarter over time</h3>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">We update your AI as your business grows — new services, new pricing, new FAQs. Always current.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <p class="section-label reveal" style="justify-content:center;">Pricing</p>
+      <h2 class="section-title reveal">Simple, honest pricing.</h2>
+      <p class="reveal" style="color:var(--muted); margin-top:0.75rem;">No hidden fees. No lock-in. Cancel anytime.</p>
+      <div class="pricing-wrap">
+        <div class="pricing-card reveal">
+          <div class="price-badge">Standard Package</div>
+          <div class="price-main">$497</div>
+          <div class="price-note">one-time setup fee</div>
+          <div class="price-then">then <strong>$297 / month</strong> — cancel anytime</div>
+          <ul class="benefits">
+            <li><span class="check">✦</span> Custom AI trained on your specific business</li>
+            <li><span class="check">✦</span> Branded chat widget — your colors, your logo</li>
+            <li><span class="check">✦</span> Lead capture + instant email notifications</li>
+            <li><span class="check">✦</span> Unlimited conversations, no per-message fees</li>
+            <li><span class="check">✦</span> Ongoing updates + priority support</li>
+          </ul>
+          <a href="https://calendly.com" target="_blank" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started Today →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container cta-inner">
+      <h2 class="reveal">Ready to stop<br>missing <em>customers?</em></h2>
+      <p class="reveal">Book a free 20-minute demo. We'll build a live prototype of your AI — on the call.</p>
+      <div class="reveal">
+        <a href="https://calendly.com" target="_blank" class="btn btn-gold btn-lg">Book a Free Demo →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a class="footer-brand" href="#">
+      <svg class="logo-svg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="20" fill="#080A0E"/>
+        <defs>
+          <filter id="lg2" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="dg2" x="-150%" y="-150%" width="400%" height="400%">
+            <feGaussianBlur stdDeviation="3.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <line x1="6"  y1="6"  x2="34" y2="34" stroke="#C9A84C" stroke-width="3"   stroke-linecap="round" opacity="0.45" filter="url(#lg2)"/>
+        <line x1="34" y1="6"  x2="6"  y2="34" stroke="#C9A84C" stroke-width="3"   stroke-linecap="round" opacity="0.45" filter="url(#lg2)"/>
+        <line x1="6"  y1="6"  x2="34" y2="34" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="34" y1="6"  x2="6"  y2="34" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="5" fill="#C9A84C" opacity="0.25" filter="url(#dg2)"/>
+        <circle cx="20" cy="20" r="2.2" fill="#FFF5D6"/>
+      </svg>
+      <span>Zenith AI</span>
+    </a>
+    <p>© Zenith AI 2026 — Custom AI Assistants for Local Business</p>
+    <p style="font-size:0.72rem; color:#3a3834;">Powered by Claude AI · Hosted on Netlify</p>
+  </footer>
+
+  <script>
+    /* NAV */
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    /* CANVAS animated grid */
+    (function () {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, dots = [];
+
+      function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+        dots = [];
+        const cols = Math.ceil(W / 95), rows = Math.ceil(H / 95);
+        for (let r = 0; r <= rows; r++)
+          for (let c = 0; c <= cols; c++)
+            dots.push({
+              ox: c * (W / cols), oy: r * (H / rows),
+              phase: Math.random() * Math.PI * 2,
+              speed: 0.3 + Math.random() * 0.4,
+              amp:   4   + Math.random() * 8,
+              x: 0, y: 0,
+            });
+      }
+
+      const COLS = () => Math.round(W / 95) + 1;
+      let t = 0;
+      function draw() {
+        t += 0.005;
+        ctx.clearRect(0, 0, W, H);
+        const G = 'rgba(201,168,76,', cols = COLS();
+
+        dots.forEach(d => {
+          d.x = d.ox + Math.sin(t * d.speed + d.phase) * d.amp;
+          d.y = d.oy + Math.cos(t * d.speed + d.phase * 1.3) * d.amp;
+        });
+
+        ctx.lineWidth = 0.4;
+        dots.forEach((d, i) => {
+          const col = i % cols, row = Math.floor(i / cols);
+          if (col < cols - 1) {
+            const n = dots[i + 1];
+            ctx.strokeStyle = G + Math.max(0, 0.09 - Math.hypot(n.x - d.x, n.y - d.y) / 2500) + ')';
+            ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(n.x, n.y); ctx.stroke();
+          }
+          if (row > 0) {
+            const n = dots[i - cols];
+            ctx.strokeStyle = G + Math.max(0, 0.09 - Math.hypot(n.x - d.x, n.y - d.y) / 2500) + ')';
+            ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(n.x, n.y); ctx.stroke();
+          }
+          ctx.fillStyle = G + '0.18)';
+          ctx.beginPath(); ctx.arc(d.x, d.y, 1, 0, Math.PI * 2); ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', resize);
+      resize(); draw();
+    })();
+
+    /* ── SCROLL ANIMATIONS ── */
+    // Enable animation mode — CSS hides .reveal elements only when this class is present
+    document.body.classList.add('js-anim');
+
+    function revealEl(el) { el.classList.add('in-view'); }
+
+    // Immediately reveal anything already visible in the viewport on load
+    function revealAlreadyInView() {
+      document.querySelectorAll('.reveal, .industry-card').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) revealEl(el);
+      });
+    }
+
+    // IntersectionObserver for scroll reveals
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          revealEl(entry.target);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Industry cards — staggered
+    const cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.industry-card').forEach((c, i) => {
+            setTimeout(() => revealEl(c), i * 100);
+          });
+          cardObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+
+    const grid = document.querySelector('.industries-grid');
+    if (grid) cardObserver.observe(grid);
+
+    // Run initial check after first paint
+    requestAnimationFrame(revealAlreadyInView);
+
+    // Nuclear fallback — force everything visible after 2.5s no matter what
+    setTimeout(() => {
+      document.querySelectorAll('.reveal, .industry-card').forEach(revealEl);
+    }, 2500);
+
+    /* PROBLEM QUOTE — word-by-word scrub */
+    function updateQuote() {
+      const q = document.getElementById('problem-quote');
+      if (!q) return;
+      const r = q.getBoundingClientRect();
+      const wh = window.innerHeight;
+      const progress = Math.max(0, Math.min(1, (wh - r.top) / (wh * 0.6)));
+      q.querySelectorAll('.rw').forEach((w, i, arr) => {
+        w.classList.toggle('lit', progress >= i / arr.length);
+      });
+    }
+    window.addEventListener('scroll', updateQuote, { passive: true });
+    updateQuote();
+
+  </script>
+</body>
+</html>
