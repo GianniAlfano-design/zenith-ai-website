@@ -340,10 +340,10 @@
 
     /* ── PRICING ── */
     .pricing-section { background: var(--surface); border-top: 1px solid var(--border); text-align: center; }
-    .pricing-wrap { display: flex; justify-content: center; margin-top: 3.5rem; }
+    .pricing-wrap { display: flex; justify-content: center; gap: 2rem; margin-top: 3.5rem; flex-wrap: wrap; }
     .pricing-card {
       background: var(--black); border: 1px solid rgba(201,168,76,0.4);
-      border-radius: 20px; padding: 3.5rem 3rem; max-width: 500px; width: 100%;
+      border-radius: 20px; padding: 3rem 2.5rem; max-width: 440px; width: 100%;
       text-align: center;
       box-shadow: 0 0 80px rgba(201,168,76,0.1), 0 40px 80px rgba(0,0,0,0.6);
       position: relative; overflow: hidden;
@@ -629,19 +629,35 @@
       <h2 class="section-title reveal">Simple, honest pricing.</h2>
       <p class="reveal" style="color:var(--muted); margin-top:0.75rem;">No hidden fees. No lock-in. Cancel anytime.</p>
       <div class="pricing-wrap">
+        <!-- SPA & SALON CARD -->
         <div class="pricing-card reveal">
-          <div class="price-badge">Standard Package</div>
+          <div class="price-badge">🌸 Spa &amp; Salon</div>
           <div class="price-main">$497</div>
           <div class="price-note">one-time setup fee</div>
           <div class="price-then">then <strong>$297 / month</strong> — cancel anytime</div>
           <ul class="benefits">
-            <li><span class="check">✦</span> Custom AI trained on your specific business</li>
-            <li><span class="check">✦</span> Branded chat widget — your colors, your logo</li>
-            <li><span class="check">✦</span> Lead capture + instant email notifications</li>
-            <li><span class="check">✦</span> Unlimited conversations, no per-message fees</li>
+            <li><span class="check">✦</span> AI trained on your services, pricing &amp; policies</li>
+            <li><span class="check">✦</span> Answers booking questions 24/7 — even at 2am</li>
+            <li><span class="check">✦</span> Captures client leads with instant email alerts</li>
+            <li><span class="check">✦</span> Branded widget — your colors, your voice</li>
             <li><span class="check">✦</span> Ongoing updates + priority support</li>
           </ul>
-          <a href="https://calendly.com/alfano-giannig/30min" target="_blank" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started Today →</a>
+          <a href="https://calendly.com/alfano-giannig/30min" target="_blank" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
+        </div>
+        <!-- REAL ESTATE CARD -->
+        <div class="pricing-card reveal">
+          <div class="price-badge">🏡 Real Estate</div>
+          <div class="price-main">$497</div>
+          <div class="price-note">one-time setup fee</div>
+          <div class="price-then">then <strong>$297 / month</strong> — cancel anytime</div>
+          <ul class="benefits">
+            <li><span class="check">✦</span> AI trained on your listings, market &amp; process</li>
+            <li><span class="check">✦</span> Qualifies buyer &amp; seller leads instantly</li>
+            <li><span class="check">✦</span> Books showings &amp; consultations around the clock</li>
+            <li><span class="check">✦</span> Branded widget — your colors, your voice</li>
+            <li><span class="check">✦</span> Ongoing updates + priority support</li>
+          </ul>
+          <a href="https://calendly.com/alfano-giannig/30min" target="_blank" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
         </div>
       </div>
     </div>
