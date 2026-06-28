@@ -340,14 +340,25 @@
 
     /* ── PRICING ── */
     .pricing-section { background: var(--surface); border-top: 1px solid var(--border); text-align: center; }
-    .pricing-wrap { display: flex; justify-content: center; gap: 2rem; margin-top: 3.5rem; flex-wrap: wrap; }
+    .pricing-wrap { display: flex; justify-content: center; gap: 1.5rem; margin-top: 3.5rem; flex-wrap: wrap; align-items: flex-start; }
     .pricing-card {
-      background: var(--black); border: 1px solid rgba(201,168,76,0.4);
-      border-radius: 20px; padding: 3rem 2.5rem; max-width: 440px; width: 100%;
+      background: var(--black); border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 20px; padding: 2.5rem 2rem; max-width: 360px; width: 100%;
       text-align: center;
-      box-shadow: 0 0 80px rgba(201,168,76,0.1), 0 40px 80px rgba(0,0,0,0.6);
+      box-shadow: 0 0 60px rgba(201,168,76,0.06), 0 30px 60px rgba(0,0,0,0.5);
       position: relative; overflow: hidden;
+    }
+    .pricing-card.featured {
+      border-color: rgba(201,168,76,0.6);
+      box-shadow: 0 0 80px rgba(201,168,76,0.15), 0 40px 80px rgba(0,0,0,0.6);
       animation: glowPulse 4s ease-in-out infinite;
+      transform: translateY(-8px);
+    }
+    .popular-tag {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: #080A0E;
+      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.3rem 1.1rem; border-radius: 0 0 10px 10px;
     }
     .pricing-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
@@ -671,35 +682,54 @@
       <h2 class="section-title reveal">Simple, honest pricing.</h2>
       <p class="reveal" style="color:var(--muted); margin-top:0.75rem;">No hidden fees. No lock-in. Cancel anytime.</p>
       <div class="pricing-wrap">
-        <!-- SPA & SALON CARD -->
+        <!-- SOLO -->
         <div class="pricing-card reveal">
-          <div class="price-badge">🌸 Spa &amp; Salon</div>
+          <div class="price-badge">Solo</div>
+          <div class="price-main">$297</div>
+          <div class="price-note">one-time setup fee</div>
+          <div class="price-then">then <strong>$197 / month</strong> — cancel anytime</div>
+          <ul class="benefits">
+            <li><span class="check">✦</span> AI trained on your business</li>
+            <li><span class="check">✦</span> Branded widget + lead capture</li>
+            <li><span class="check">✦</span> 1 location covered</li>
+            <li><span class="check">✦</span> 1 update per month</li>
+            <li><span class="check">✦</span> Standard support</li>
+          </ul>
+          <a href="#get-started" class="btn btn-outline btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
+        </div>
+        <!-- STUDIO (featured) -->
+        <div class="pricing-card featured reveal">
+          <div class="popular-tag">Most Popular</div>
+          <div class="price-badge" style="margin-top:1.5rem;">Studio</div>
           <div class="price-main">$497</div>
           <div class="price-note">one-time setup fee</div>
           <div class="price-then">then <strong>$297 / month</strong> — cancel anytime</div>
           <ul class="benefits">
-            <li><span class="check">✦</span> AI trained on your services, pricing &amp; policies</li>
-            <li><span class="check">✦</span> Answers booking questions 24/7 — even at 2am</li>
-            <li><span class="check">✦</span> Captures client leads with instant email alerts</li>
-            <li><span class="check">✦</span> Branded widget — your colors, your voice</li>
-            <li><span class="check">✦</span> Ongoing updates + priority support</li>
+            <li><span class="check">✦</span> AI trained on your business</li>
+            <li><span class="check">✦</span> Branded widget + lead capture</li>
+            <li><span class="check">✦</span> 1 location covered</li>
+            <li><span class="check">✦</span> 2 updates per month</li>
+            <li><span class="check">✦</span> Monthly performance report</li>
+            <li><span class="check">✦</span> Staff-aware responses</li>
           </ul>
-          <a href="https://calendly.com/alfano-giannig/30min" target="_blank" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
+          <a href="#get-started" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
         </div>
-        <!-- REAL ESTATE CARD -->
+        <!-- SCALE -->
         <div class="pricing-card reveal">
-          <div class="price-badge">🏡 Real Estate</div>
-          <div class="price-main">$697</div>
+          <div class="price-badge">Scale</div>
+          <div class="price-main">$797</div>
           <div class="price-note">one-time setup fee</div>
-          <div class="price-then">then <strong>$397 / month</strong> — cancel anytime</div>
+          <div class="price-then">then <strong>$497 / month</strong> — cancel anytime</div>
           <ul class="benefits">
-            <li><span class="check">✦</span> AI trained on your listings, market &amp; process</li>
-            <li><span class="check">✦</span> Qualifies buyer &amp; seller leads instantly</li>
-            <li><span class="check">✦</span> Books showings &amp; consultations around the clock</li>
-            <li><span class="check">✦</span> Branded widget — your colors, your voice</li>
-            <li><span class="check">✦</span> Ongoing updates + priority support</li>
+            <li><span class="check">✦</span> AI trained on your business</li>
+            <li><span class="check">✦</span> Branded widget + lead capture</li>
+            <li><span class="check">✦</span> Up to 3 locations</li>
+            <li><span class="check">✦</span> Unlimited updates</li>
+            <li><span class="check">✦</span> Monthly performance report</li>
+            <li><span class="check">✦</span> Staff-aware responses</li>
+            <li><span class="check">✦</span> Priority support</li>
           </ul>
-          <a href="https://calendly.com/alfano-giannig/30min" target="_blank" class="btn btn-gold btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
+          <a href="#get-started" class="btn btn-outline btn-lg" style="width:100%; justify-content:center;">Get Started →</a>
         </div>
       </div>
     </div>
